@@ -107,7 +107,6 @@ export async function addTask(name: string, dueDate?: string): Promise<void> {
       ...(dueDate && { "Due date": { date: { start: dueDate } } }),
     },
   });
-  console.log("Created page:", JSON.stringify(response, null, 2));
 }
 
 /**

@@ -26,6 +26,26 @@ export async function handleDone(ctx: Context): Promise<void> {
     return;
   }
 
+  if (pendingDone.has(userId) && text && !text.startsWith("/done")) {
+    const taskIds = pendingDone.get(userId)!;
+    const index = parseInt(text) - 1;
+
+    if (isNaN(index) || index < 0 || index >= taskIds.length) {
+      await ctx.reply("Invalid number. Try again or send /done to restart.");
+      return;
+    }
+
+    try {
+      await updateTaskStatus(taskIds[index], "Done");
+      pendingDone.delete(userId);
+      await ctx.reply("Task marked as done.");
+    } catch (err) {
+      await ctx.reply("Failed to update task.");
+      console.error(err);
+    }
+    return;
+  }
+
   try {
     const tasks = await getOpenTasks();
 

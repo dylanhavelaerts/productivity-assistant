@@ -32,9 +32,9 @@ bot.command("quit", (ctx) => handleQuit(ctx));
 // Handle plain text replies (for multi-step flows)
 bot.on("text", async (ctx) => {
   if (await handleQuit(ctx)) return;
-  handleDone(ctx);
-  handleArchive(ctx);
-  handleDelete(ctx);
+  await handleDone(ctx);
+  await handleArchive(ctx);
+  await handleDelete(ctx);
 });
 
 // Start cron job
