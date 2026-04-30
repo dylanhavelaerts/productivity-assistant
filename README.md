@@ -1,20 +1,15 @@
 <h1 align="center">Productivity Assistant</h1>
 
----
 
 <p align="center">
   Personal productivity assistant that links notion database and interacts with telegram messages
 </p>
 
-#### Version
-
----
-
-**Current version**: v1.0
+<p align="center">
+Current version: v1.0
+</p>
 
 ## Introduction
-
----
 
 This productivity assistant is a small scale project that helps me integrate my notion to-do list database with my phone. A telegram bot will notify me when a deadline is nearby. Besides this I am able to add or complete tasks by interacting in the telegram chat.
 This project will be documented and stay open-source for you to try or improve.
@@ -26,9 +21,7 @@ This project will be documented and stay open-source for you to try or improve.
 - Telegram ability to complete tasks
 - Telegram ability to see all tasks
 
-#### Planned
-
----
+### Planned
 
 - Add Dockerfile and docker-compose.yml for hetzner server
 - Add /statistics
@@ -37,8 +30,6 @@ This project will be documented and stay open-source for you to try or improve.
 - ...
 
 ### Commands
-
----
 
 | Command    | Description                              |
 | ---------- | ---------------------------------------- |
@@ -49,8 +40,6 @@ This project will be documented and stay open-source for you to try or improve.
 | `/delete`  | Permanently delete a task                |
 
 ### Setup
-
----
 
 1. Clone the repository
 2. Install dependencies with `npm install`
@@ -65,11 +54,7 @@ This project will be documented and stay open-source for you to try or improve.
 
 ### Tech stack
 
----
-
 - **Node.js** + **TypeScript**
 - **Telegraf** — Telegram bot framework
 - **Notion API** — task database
 - **date-fns** — date formatting
-
----
