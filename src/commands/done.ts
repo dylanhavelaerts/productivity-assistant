@@ -11,6 +11,8 @@ const pendingDone = new Map<number, string[]>();
  * 2. Bot replies with a numbered list of open tasks
  * 3. User replies with the number corresponding to the completed task
  * 4. Bot updates the task status to "Done" in Notion and confirms
+ *
+ * Note: /quit to exit the flow
  * @param ctx - Telegraf context containing message details
  * @returns - A promise that resolves when the task is marked as done and a confirmation message is sent
  */
@@ -20,6 +22,12 @@ export async function handleDone(ctx: Context): Promise<void> {
 
   const message = ctx.message as { text: string } | undefined;
   const text = message?.text?.trim();
+
+  if (pendingDone.has(userId) && text && text.startsWith("quit")) {
+    pendingDone.delete(userId);
+    await ctx.reply("Operation cancelled.");
+    return;
+  }
 
   if (pendingDone.has(userId) && text && !text.startsWith("/done")) {
     const taskIds = pendingDone.get(userId)!;
