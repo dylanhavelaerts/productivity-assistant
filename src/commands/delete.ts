@@ -5,16 +5,14 @@ import { format, parseISO } from "date-fns";
 const pendingDelete = new Map<number, string[]>();
 
 /**
- * Handles the /delete command to delete a task in notion
+ * Handles the /delete command to permanently delete a task from Notion
  * Expected flow:
  * 1. User sends /delete
  * 2. Bot replies with a numbered list of open tasks
  * 3. User replies with the number corresponding to the task to delete
- * 4. Bot deletes the task in Notion and confirms
- *
- * Note: /quit to exit the flow
- * @param ctx
- * @returns
+ * 4. Bot deletes the task from Notion and confirms
+ * @param ctx - Telegraf context containing message details
+ * @returns - A promise that resolves when the task is deleted and a confirmation message is sent
  */
 export async function handleDelete(ctx: Context): Promise<void> {
   const userId = ctx.from?.id;
@@ -23,34 +21,27 @@ export async function handleDelete(ctx: Context): Promise<void> {
   const message = ctx.message as { text: string } | undefined;
   const text = message?.text?.trim();
 
-  // 1. Handle Quit
-  if (pendingDelete.has(userId) && text === "/quit") {
+  if (pendingDelete.has(userId) && text && text.startsWith("quit")) {
     pendingDelete.delete(userId);
     await ctx.reply("Operation cancelled.");
     return;
   }
 
-  if (!pendingDelete.has(userId) && text !== "/delete") {
-    return;
-  }
-
-  if (pendingDelete.has(userId) && text !== "/delete") {
+  if (pendingDelete.has(userId) && text && !text.startsWith("/delete")) {
     const taskIds = pendingDelete.get(userId)!;
-    const index = parseInt(text || "") - 1;
+    const index = parseInt(text) - 1;
 
     if (isNaN(index) || index < 0 || index >= taskIds.length) {
-      await ctx.reply("Invalid number. Try again or send /quit to cancel.");
+      await ctx.reply("Invalid number. Try again or send /delete to restart.");
       return;
     }
 
     try {
       await deleteTask(taskIds[index]);
       pendingDelete.delete(userId);
-      await ctx.reply("Task deleted successfully.");
+      await ctx.reply("Task deleted.");
     } catch (err) {
-      await ctx.reply(
-        "Failed to delete task. Please check your Notion connection.",
-      );
+      await ctx.reply("Failed to delete task.");
       console.error(err);
     }
     return;
@@ -60,7 +51,7 @@ export async function handleDelete(ctx: Context): Promise<void> {
     const tasks = await getOpenTasks();
 
     if (tasks.length === 0) {
-      await ctx.reply("No open tasks to delete.");
+      await ctx.reply("No open tasks.");
       return;
     }
 
@@ -79,10 +70,10 @@ export async function handleDelete(ctx: Context): Promise<void> {
       .join("\n");
 
     await ctx.reply(
-      `Which task do you want to DELETE? This cannot be undone.\n\n${taskList}\n\nSend the number or /quit:`,
+      `Which task should be deleted? Task number:\n\n${taskList}`,
     );
   } catch (err) {
-    await ctx.reply("Failed to fetch tasks from Notion.");
+    await ctx.reply("Failed to fetch tasks.");
     console.error(err);
   }
 }

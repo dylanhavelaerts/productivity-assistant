@@ -100,13 +100,24 @@ export async function getUpcomingTasks(): Promise<Task[]> {
  * @param dueDate - optional due date for the task
  */
 export async function addTask(name: string, dueDate?: string): Promise<void> {
-  await notion.pages.create({
+  const response = await notion.pages.create({
     parent: { database_id: DATABASE_ID },
     properties: {
       Name: { title: [{ text: { content: name } }] },
-      Status: { status: { name: "Not started" } },
       ...(dueDate && { "Due date": { date: { start: dueDate } } }),
     },
+  });
+  console.log("Created page:", JSON.stringify(response, null, 2));
+}
+
+/**
+ * Deletes the task with the given id by moving it to the trash
+ * @param taskId - id of the task to delete
+ */
+export async function deleteTask(taskId: string): Promise<void> {
+  await notion.pages.update({
+    page_id: taskId,
+    in_trash: true,
   });
 }
 
