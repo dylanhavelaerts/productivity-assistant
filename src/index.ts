@@ -6,6 +6,7 @@ import { handleDone } from "./commands/done";
 import { handleArchive } from "./commands/archive";
 import { startDeadlineNotifier } from "./jobs/deadlineNotifier";
 import { handleDelete } from "./commands/delete";
+import { handleQuit } from "./commands/quit";
 
 dotenv.config();
 
@@ -26,9 +27,11 @@ bot.command("tasks", handleTasks);
 bot.command("done", handleDone);
 bot.command("archive", handleArchive);
 bot.command("delete", handleDelete);
+bot.command("quit", (ctx) => handleQuit(ctx));
 
-// Handle plain text replies (for /done and /archive flows)
-bot.on("text", (ctx) => {
+// Handle plain text replies (for multi-step flows)
+bot.on("text", async (ctx) => {
+  if (await handleQuit(ctx)) return;
   handleDone(ctx);
   handleArchive(ctx);
   handleDelete(ctx);

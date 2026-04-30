@@ -2,7 +2,7 @@ import { Context } from "telegraf";
 import { getOpenTasks, deleteTask } from "../notion/client";
 import { format, parseISO } from "date-fns";
 
-const pendingDelete = new Map<number, string[]>();
+export const pendingDelete = new Map<number, string[]>();
 
 /**
  * Handles the /delete command to permanently delete a task from Notion
@@ -20,12 +20,6 @@ export async function handleDelete(ctx: Context): Promise<void> {
 
   const message = ctx.message as { text: string } | undefined;
   const text = message?.text?.trim();
-
-  if (pendingDelete.has(userId) && text && text.startsWith("quit")) {
-    pendingDelete.delete(userId);
-    await ctx.reply("Operation cancelled.");
-    return;
-  }
 
   if (pendingDelete.has(userId) && text && !text.startsWith("/delete")) {
     const taskIds = pendingDelete.get(userId)!;

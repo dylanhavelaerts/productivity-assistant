@@ -2,7 +2,7 @@ import { Context } from "telegraf";
 import { getOpenTasks, updateTaskStatus } from "../notion/client";
 import { format, parseISO } from "date-fns";
 
-const pendingArchive = new Map<number, string[]>();
+export const pendingArchive = new Map<number, string[]>();
 
 /**
  * Handles the /archive command to mark a task as archived in notion
@@ -12,7 +12,6 @@ const pendingArchive = new Map<number, string[]>();
  * 3. User replies with the number corresponding to the completed task
  * 4. Bot updates the task status to "Done" in Notion and confirms
  *
- * Note: /quit to exit the flow
  * @param ctx - Telegraf context containing message details
  * @returns - A promise that resolves when the task is marked as done and a confirmation message is sent
  */
@@ -22,12 +21,6 @@ export async function handleArchive(ctx: Context): Promise<void> {
 
   const message = ctx.message as { text: string } | undefined;
   const text = message?.text?.trim();
-
-  if (pendingArchive.has(userId) && text && text.startsWith("/quit")) {
-    pendingArchive.delete(userId);
-    await ctx.reply("Operation cancelled.");
-    return;
-  }
 
   if (!pendingArchive.has(userId) && !text?.startsWith("/archive")) {
     return;
