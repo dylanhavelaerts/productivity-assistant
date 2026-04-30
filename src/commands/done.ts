@@ -23,29 +23,13 @@ export async function handleDone(ctx: Context): Promise<void> {
   const message = ctx.message as { text: string } | undefined;
   const text = message?.text?.trim();
 
-  if (pendingDone.has(userId) && text && text.startsWith("quit")) {
+  if (pendingDone.has(userId) && text && text.startsWith("/quit")) {
     pendingDone.delete(userId);
     await ctx.reply("Operation cancelled.");
     return;
   }
 
-  if (pendingDone.has(userId) && text && !text.startsWith("/done")) {
-    const taskIds = pendingDone.get(userId)!;
-    const index = parseInt(text) - 1;
-
-    if (isNaN(index) || index < 0 || index >= taskIds.length) {
-      await ctx.reply("Invalid number. Try again or send /done to restart.");
-      return;
-    }
-
-    try {
-      await updateTaskStatus(taskIds[index], "Done");
-      pendingDone.delete(userId);
-      await ctx.reply("Task marked as done.");
-    } catch (err) {
-      await ctx.reply("Failed to update task.");
-      console.error(err);
-    }
+  if (!pendingDone.has(userId) && !text?.startsWith("/done")) {
     return;
   }
 

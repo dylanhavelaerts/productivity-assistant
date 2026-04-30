@@ -1,6 +1,6 @@
 import { Context } from "telegraf";
 import { addTask } from "../notion/client";
-import { parse, isValid } from "date-fns";
+import { parse, isValid, format } from "date-fns";
 
 /**
  * Handles the /add command to add a new task to notion
@@ -34,7 +34,7 @@ export async function handleAdd(ctx: Context): Promise<void> {
     }
 
     // Convert to YYYY-MM-DD for notion (notion expects ISO format)
-    dueDateStr = parsed.toISOString().split("T")[0];
+    dueDateStr = format(parsed, "yyyy-MM-dd");
   }
 
   try {

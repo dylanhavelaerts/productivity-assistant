@@ -5,9 +5,9 @@ import { format, parseISO } from "date-fns";
 const pendingArchive = new Map<number, string[]>();
 
 /**
- * Handles the /done command to mark a task as done in notion
+ * Handles the /archive command to mark a task as archived in notion
  * Expected flow:
- * 1. User sends /done
+ * 1. User sends /archive
  * 2. Bot replies with a numbered list of open tasks
  * 3. User replies with the number corresponding to the completed task
  * 4. Bot updates the task status to "Done" in Notion and confirms
@@ -16,7 +16,7 @@ const pendingArchive = new Map<number, string[]>();
  * @param ctx - Telegraf context containing message details
  * @returns - A promise that resolves when the task is marked as done and a confirmation message is sent
  */
-export async function handleDone(ctx: Context): Promise<void> {
+export async function handleArchive(ctx: Context): Promise<void> {
   const userId = ctx.from?.id;
   if (!userId) return;
 
@@ -26,6 +26,10 @@ export async function handleDone(ctx: Context): Promise<void> {
   if (pendingArchive.has(userId) && text && text.startsWith("/quit")) {
     pendingArchive.delete(userId);
     await ctx.reply("Operation cancelled.");
+    return;
+  }
+
+  if (!pendingArchive.has(userId) && !text?.startsWith("/archive")) {
     return;
   }
 
