@@ -16,7 +16,7 @@ This project will be documented and stay open-source for you to try or improve.
 
 ### Features
 
-- Telegram deadline notifier
+- Telegram deadline notifier (every 9AM)
 - Telegram ability to add tasks
 - Telegram ability to complete tasks
 - Telegram ability to see all tasks
