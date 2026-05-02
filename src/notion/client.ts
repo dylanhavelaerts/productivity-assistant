@@ -61,6 +61,18 @@ export async function getOpenTasks(): Promise<Task[]> {
 }
 
 /**
+ * Fetches all tasks regardless of status
+ * @returns - a promise that resolves to an array of all Task objects
+ */
+export async function getAllTasks(): Promise<Task[]> {
+  const response = await notion.databases.query({
+    database_id: DATABASE_ID,
+  });
+
+  return (response.results as PageObjectResponse[]).map(extractTask);
+}
+
+/**
  * Fetches tasks that are due to today or tomorrow and have not been completed
  * @returns - promise that resolves to an array of Task objects that are due to today or tomorrow
  */

@@ -1,5 +1,5 @@
 import { Context } from "telegraf";
-import { getOpenTasks, deleteTask } from "../notion/client";
+import { getAllTasks, deleteTask } from "../notion/client";
 import { format, parseISO } from "date-fns";
 
 export const pendingDelete = new Map<number, string[]>();
@@ -46,10 +46,10 @@ export async function handleDelete(ctx: Context): Promise<void> {
   }
 
   try {
-    const tasks = await getOpenTasks();
+    const tasks = await getAllTasks();
 
     if (tasks.length === 0) {
-      await ctx.reply("No open tasks.");
+      await ctx.reply("No tasks found.");
       return;
     }
 
